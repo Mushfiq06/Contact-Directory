@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Contact {
+    char name[50];
+    char phone[20];
+    char email[50];
+    struct Contact* next;
+};
+
+struct Contact* head = NULL;
+
+void addContact() {
+    struct Contact* newContact = (struct Contact*)malloc(sizeof(struct Contact));
+
+    if (newContact == NULL) {
+        printf("Cannot add contact.\n");
+        return;
+    }
+
+    printf("Enter name: ");
+    scanf("%s", newContact->name);
+    printf("Enter phone: ");
+    scanf("%s", newContact->phone);
+    printf("Enter email: ");
+    scanf("%s", newContact->email);
+
+    newContact->next = head;
+    head = newContact;
+
+    printf("Contact added successfully.\n");
+}
+
+
+void deleteContact() {
+    char searchName[50];
+    printf("Enter the name of the contact to delete: ");
+    scanf("%s", searchName);
+
+    struct Contact* current = head;
+    struct Contact* prev = NULL;
+
+    while (current != NULL) {
+        if (strcmp(current->name, searchName) == 0) {
+            if (prev == NULL) {
+                head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(current);
+            printf("Contact deleted successfully.\n");
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    printf("Contact not found.\n");
+}
+
+
+void searchContact() {
+    char searchName[50];
+    printf("Enter the name to search: ");
+    scanf("%s", searchName);
+
+    struct Contact* current = head;
+
+    while (current != NULL) {
+        if (strcmp(current->name, searchName) == 0) {
+            printf("Name: %s\n", current->name);
+            printf("Phone: %s\n", current->phone);
+            printf("Email: %s\n", current->email);
+            return;
+        }
+        current = current->next;
+    }
+
+    printf("Contact not found.\n");
+}
+
+
+void displayContacts() {
+    struct Contact* current = head;
+
+    if (current == NULL) {
+        printf("Contact list is empty.\n");
+        return;
+    }
+
+    printf("Contacts:\n");
+    while (current != NULL) {
+        printf("Name: %s\n", current->name);
+        printf("Phone: %s\n", current->phone);
+        printf("Email: %s\n", current->email);
+        printf("\n");
+        current = current->next;
+    }
+}
+
+
+void cleanup() {
+    struct Contact* current = head;
+    while (current != NULL) {
+        struct Contact* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("Contact Management System\n");
+        printf("1. Add Contact\n");
+        printf("2. Delete Contact\n");
+        printf("3. Search Contact\n");
+        printf("4. Display Contacts\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addContact();
+                break;
+            case 2:
+                deleteContact();
+                break;
+            case 3:
+                searchContact();
+                break;
+            case 4:
+                displayContacts();
+                break;
+            case 5:
+                cleanup();
+                printf("Exiting the program.\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+
+    return 0;
+}
